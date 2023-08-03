@@ -42,21 +42,80 @@ const Home = () => {
   }, []);
 
   let mod350Data: any[] = [];
-  if (data) {
+  if ((data && selectedValues?.length === 0) || selected350?.length > 0) {
     const modTest = data
       .slice(startIndex, startIndex + PAGE_SIZE)
       .map((dataX: any) => dataX.mod350);
-    const unique = Array.from(new Set(modTest));
+    const unique = Array.from(new Set(modTest))?.sort(
+      (a: any, b: any) => b - a
+    );
     mod350Data = unique.map((data: any, i: any) => {
+      return { name: data, id: i };
+    });
+  } else if (
+    (selected350?.length === 0 && selected8000?.length > 0) ||
+    (selected350?.length === 0 && selected20002?.length > 0)
+  ) {
+    const mod = data.filter((data1: any) =>
+      selectedValues.map((data2: any) => data2.mod350).includes(data1.mod350)
+    );
+    const modTest = mod.map((dataX: any) => dataX.mod350);
+
+    const unique = Array.from(new Set(modTest))?.sort(
+      (a: any, b: any) => b - a
+    );
+    mod350Data = unique.map((data: any, i: any) => {
+      return { name: data, id: i };
+    });
+  }
+  let mod8000Data: any[] = [];
+  if ((data && selectedValues?.length === 0) || selected8000?.length > 0) {
+    const modTest = data
+      .slice(startIndex, startIndex + PAGE_SIZE)
+      .map((dataX: any) => dataX.mod8000)
+      ?.sort((a: any, b: any) => b - a);
+    const unique = Array.from(new Set(modTest));
+    mod8000Data = unique.map((data: any, i: any) => {
+      return { name: data, id: i };
+    });
+  } else if (
+    (selected8000?.length === 0 && selected350?.length > 0) ||
+    (selected8000?.length === 0 && selected20002?.length > 0)
+  ) {
+    const mod = data.filter((data1: any) =>
+      selectedValues.map((data2: any) => data2.mod8000).includes(data1.mod8000)
+    );
+    const modTest = mod
+      .map((dataX: any) => dataX.mod8000)
+      ?.sort((a: any, b: any) => b - a);
+    const unique = Array.from(new Set(modTest));
+    mod8000Data = unique.map((data: any, i: any) => {
       return { name: data, id: i };
     });
   }
 
   let mod20002Data: any[] = [];
-  if (data) {
+  if ((data && selectedValues?.length === 0) || selected20002?.length > 0) {
     const modTest = data
       .slice(startIndex, startIndex + PAGE_SIZE)
-      .map((dataX: any) => dataX.mod20002);
+      .map((dataX: any) => dataX.mod20002)
+      ?.sort((a: any, b: any) => b - a);
+    const unique = Array.from(new Set(modTest));
+    mod20002Data = unique.map((data: any, i: any) => {
+      return { name: data, id: i };
+    });
+  } else if (
+    (selected20002?.length === 0 && selected350?.length > 0) ||
+    (selected20002?.length === 0 && selected8000?.length > 0)
+  ) {
+    const mod = data.filter((data1: any) =>
+      selectedValues
+        .map((data2: any) => data2.mod20002)
+        .includes(data1.mod20002)
+    );
+    const modTest = mod
+      .map((dataX: any) => dataX.mod20002)
+      ?.sort((a: any, b: any) => b - a);
     const unique = Array.from(new Set(modTest));
     mod20002Data = unique.map((data: any, i: any) => {
       return { name: data, id: i };
@@ -84,7 +143,7 @@ const Home = () => {
     ) {
       setEnd(startIndex + PAGE_SIZE);
     }
-  }, [selectedValues,handleNextPage]);
+  }, [selectedValues, handleNextPage]);
 
   return (
     <div>
@@ -102,29 +161,31 @@ const Home = () => {
               );
               setSelectedValues(testData);
             }}
-            onRemove={(selectedList, removedItem) => {
-              const select = selectedList.map(({ name }) => name);
+            onRemove={
+              selected350?.length > 0
+                ? (selectedList, removedItem) => {
+                    const select = selectedList.map(({ name }) => name);
 
-              const testData = data.filter((data1: any) =>
-                //@ts-ignore
-                select.includes(data1?.mod350)
-              );
-              setSelectedValues(testData);
-            }}
-            selectedValues={[]}
+                    const testData = data.filter((data1: any) =>
+                      //@ts-ignore
+                      select.includes(data1?.mod350)
+                    );
+                    setSelectedValues(testData);
+                  }
+                : () => {}
+            }
+            selectedValues={
+              (selected350?.length === 0 && selected20002?.length > 0) ||
+              (selected350?.length === 0 && selected8000?.length > 0)
+                ? mod350Data
+                : []
+            }
           ></Multiselectcomp>
         </div>
         <div className="mr-[50px]">
           <Multiselectcomp
             placeholder={"mod8000"}
-            options={
-              data &&
-              data
-                ?.slice(startIndex, startIndex + PAGE_SIZE)
-                .map((data: any, i: any) => {
-                  return { name: data.mod8000, id: i };
-                })
-            }
+            options={mod8000Data}
             onSelect={(selectedList, selectedItem) => {
               const select = selectedList.map(({ name }) => name);
               setSelected8000(selectedList);
@@ -134,16 +195,24 @@ const Home = () => {
               );
               setSelectedValues(testData);
             }}
-            onRemove={(selectedList, removedItem) => {
-              const select = selectedList.map(({ name }) => name);
-              console.log(selectedList);
-              const testData = data.filter((data1: any) =>
-                //@ts-ignore
-                select.includes(data1?.mod8000)
-              );
-              setSelectedValues(testData);
-            }}
-            selectedValues={[]}
+            onRemove={
+              selected8000?.length > 0
+                ? (selectedList, removedItem) => {
+                    const select = selectedList.map(({ name }) => name);
+                    const testData = data.filter((data1: any) =>
+                      //@ts-ignore
+                      select.includes(data1?.mod8000)
+                    );
+                    setSelectedValues(testData);
+                  }
+                : () => {}
+            }
+            selectedValues={
+              (selected8000?.length === 0 && selected20002?.length > 0) ||
+              (selected8000?.length === 0 && selected350?.length > 0)
+                ? mod8000Data
+                : []
+            }
           ></Multiselectcomp>
         </div>
         <Multiselectcomp
@@ -158,16 +227,25 @@ const Home = () => {
             );
             setSelectedValues(testData);
           }}
-          onRemove={(selectedList, removedItem) => {
-            const select = selectedList.map(({ name }) => name);
-            console.log(selectedList);
-            const testData = data.filter((data1: any) =>
-              //@ts-ignore
-              select.includes(data1?.mod8000)
-            );
-            setSelectedValues(testData);
-          }}
-          selectedValues={[]}
+          onRemove={
+            selected20002?.length > 0
+              ? (selectedList, removedItem) => {
+                  const select = selectedList.map(({ name }) => name);
+                  console.log(selectedList);
+                  const testData = data.filter((data1: any) =>
+                    //@ts-ignore
+                    select.includes(data1?.mod20002)
+                  );
+                  setSelectedValues(testData);
+                }
+              : () => {}
+          }
+          selectedValues={
+            (selected20002?.length === 0 && selected350?.length > 0) ||
+            (selected20002?.length === 0 && selected8000?.length > 0)
+              ? mod20002Data
+              : []
+          }
         ></Multiselectcomp>
         {/* <div className="mr-[50px]">
           <Multiselectcomp></Multiselectcomp>

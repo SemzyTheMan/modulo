@@ -18,3 +18,11 @@ code {
 table {
   width: 100%;
 }
+.multiselect-container {
+  width: 200px !important;
+}
+.search-wrapper {
+  overflow-y: scroll;
+  height: 40px;
+  overflow-x: hidden;
+}
